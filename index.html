@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Birthday Surprise</title>
+    <style>
+        :root {
+            --primary: #ff4d8f;
+            --secondary: #4d79ff;
+            --accent: #ffde59;
+            --dark: #2d3748;
+            --light: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: titlePulse 2s infinite alternate;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 77, 143, 0.3);
+            position: relative;
+            overflow: hidden;
+            outline: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 77, 143, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .step {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 2rem;
+        }
+        
+        .step.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .balloon-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+        
+        .gift-box {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin: 2rem auto;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .gift-box:hover {
+            transform: scale(1.05);
+        }
+        
+        .gift-lid {
+            width: 220px;
+            height: 40px;
+            background: var(--primary);
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+            transform-origin: center bottom;
+            z-index: 2;
+        }
+        
+        .gift-box:hover .gift-lid {
+            transform: rotateX(-80deg) translateY(-40px);
+        }
+        
+        .gift-box-main {
+            width: 200px;
+            height: 200px;
+            background: var(--secondary);
+            position: relative;
+            border-radius: 5px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .gift-ribbon {
+            position: absolute;
+            width: 40px;
+            height: 200px;
+            background: var(--accent);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .gift-ribbon-horizontal {
+            position: absolute;
+            width: 200px;
+            height: 40px;
+            background: var(--accent);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            opacity: 0;
+        }
+        
+        .memory-card {
+            width: 150px;
+            height: 200px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+        }
+        
+        .memory-card:hover {
+            transform: perspective(1000px) rotateY(5deg) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .memory-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        
+        .memory-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .memory-text {
+            padding: 10px;
+            font-size: 0.9rem;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .locked-message {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem auto;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .key-input {
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            outline: none;
+            text-align: center;
+            margin: 1rem 0;
+            width: 250px;
+        }
+        
+        .progress-bar {
+            width: 80%;
+            max-width: 500px;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 1rem auto;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .heart {
+            display: inline-block;
+            color: var(--primary);
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        .final-gift {
+            margin: 2rem auto;
+            position: relative;
+            max-width: 600px;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            transform: scale(0);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        }
+        
+        .final-gift.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .sparkles {
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: 60px;
+            height: 60px;
+            animation: rotate 10s linear infinite;
+        }
+        
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            color: var(--primary);
+        }
+        
+        @keyframes titlePulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(110vh) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1);
+            }
+            75% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+            
+            .memory-card {
+                width: 120px;
+                height: 170px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="balloon-container" id="balloonContainer"></div>
+    <div class="confetti-container" id="confettiContainer"></div>
+    
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+    
+    <div class="container">
+        <div class="step active" id="step1">
+            <h1>🎉 Happy Birthday! 🎉</h1>
+            <p>Someone special has prepared a birthday adventure just for you! Are you ready to unlock your special gift?</p>
+            <button class="btn" id="startBtn">Let's Begin! <span>🚀</span></button>
+        </div>
+        
+        <div class="step" id="step2">
+            <h1>First Challenge: Memory Lane 💭</h1>
+            <p>Click through these special memories to find the first clue!</p>
+            <div class="memory-container">
+                <div class="memory-card" data-memory="1">
+                    <img src="/api/placeholder/150/150" alt="Memory 1" class="memory-img">
+                    <div class="memory-text">Remember this day?</div>
+                </div>
+                <div class="memory-card" data-memory="2">
+                    <img src="/api/placeholder/150/150" alt="Memory 2" class="memory-img">
+                    <div class="memory-text">Good times!</div>
+                </div>
+                <div class="memory-card" data-memory="3">
+                    <img src="/api/placeholder/150/150" alt="Memory 3" class="memory-img">
+                    <div class="memory-text">Never forget this!</div>
+                </div>
+                <div class="memory-card" data-memory="4">
+                    <img src="/api/placeholder/150/150" alt="Memory 4" class="memory-img">
+                    <div class="memory-text">Special moment...</div>
+                </div>
+            </div>
+            <div class="locked-message" id="memoryMessage" style="display: none;">
+                First clue revealed: The first part of your key is "happy"
+            </div>
+            <button class="btn" id="memoryNextBtn" style="display: none;">Continue to Next Challenge</button>
+        </div>
+        
+        <div class="step" id="step3">
+            <h1>Second Challenge: Secret Gift 🎁</h1>
+            <p>Click on this gift to see what's inside!</p>
+            <div class="gift-box" id="giftBox">
+                <div class="gift-lid"></div>
+                <div class="gift-box-main">
+                    <div class="gift-ribbon"></div>
+                    <div class="gift-ribbon-horizontal"></div>
+                </div>
+            </div>
+            <div class="locked-message" id="giftMessage" style="display: none;">
+                Second clue revealed: The final part of your key is "friend"
+            </div>
+            <button class="btn" id="giftNextBtn" style="display: none;">Continue to Final Step</button>
+        </div>
+        
+        <div class="step" id="step4">
+            <h1>Final Step: Unlock Your Gift! 🔑</h1>
+            <p>Enter the secret phrase you've collected from all the challenges:</p>
+            <input type="text" class="key-input" id="keyInput" placeholder="Enter secret phrase...">
+            <button class="btn" id="unlockBtn">Unlock My Gift!</button>
+            <p id="keyHint" style="color: var(--primary); margin-top: 1rem; font-size: 0.9rem;"></p>
+        </div>
+        
+        <div class="step" id="step5">
+            <h1>🎊 Surprise! 🎊</h1>
+            <p>Your gift is being prepared with <span class="heart">❤️</span></p>
+            <div class="countdown" id="countdown">3</div>
+            <div class="final-gift" id="finalGift">
+                <svg class="sparkles" viewBox="0 0 100 100">
+                    <path fill="gold" d="M50 0 L53 35 L65 12 L56 40 L85 25 L58 48 L90 65 L60 60 L70 90 L50 65 L30 90 L40 60 L10 65 L42 48 L15 25 L44 40 L35 12 L47 35 Z"></path>
+                </svg>
+                <h2>Happy Birthday, Kindness 🥳</h2>
+                <p>You are truly special and deserve all the happiness in the world. This gift is a token of my appreciation for your friendship.</p>
+                <p>I've prepared something special for you:</p>
+                <p style="font-size: 1.5rem; margin: 1.5rem 0; font-weight: bold;">
+                    My brother, my partner-in-crime, my forever friend! 🫂<br> 
+                    You heart so golden, like sun shining even on rainy days. 🌦️<br> 
+                    Thank you for always picking me up when I fall, for laughing with me (always at me!), and for teaching me kindness without even trying. 💖<br> 
+                    Life without you? Like samosa without chutney—**never complete!** 😭<br> 
+                    I wish koi bhabhi mile aur tera kaam settle ho kyuki ab mujhko bhi nephew chaiye.<br> 
+                    <em>You deserve everything good, today and always.</em>
+                </p>
+                <p>May this new year of your life bring you endless joy, success, and beautiful moments to cherish forever.</p>
+                <p>With love and best wishes,</p>
+                <p style="font-weight: bold; margin-top: 1rem;">Parantak 🌟</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Helper functions
+        function getElement(id) {
+            return document.getElementById(id);
+        }
+        
+        function showElement(element) {
+            if (typeof element === 'string') {
+                element = getElement(element);
+            }
+            element.style.display = 'block';
+        }
+        
+        function hideElement(element) {
+            if (typeof element === 'string') {
+                element = getElement(element);
+            }
+            element.style.display = 'none';
+        }
+        
+        function updateProgress(step) {
+            const progress = getElement('progress');
+            const percentage = (step - 1) * 33;
+            progress.style.width = `${percentage}%`;
+        }
+        
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            getElement(`step${stepNumber}`).classList.add('active');
+            updateProgress(stepNumber);
+        }
+        
+        // Create balloons
+        function createBalloons() {
+            const colors = ['#ff4d8f', '#4d79ff', '#ffde59', '#50c878', '#ff7f50'];
+            const container = getElement('balloonContainer');
+            
+            for (let i = 0; i < 15; i++) {
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.left = `${Math.random() * 100}%`;
+                balloon.style.animationDuration = `${15 + Math.random() * 10}s`;
+                balloon.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(balloon);
+            }
+        }
+        
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#ff4d8f', '#4d79ff', '#ffde59', '#50c878', '#ff7f50'];
+            const container = getElement('confettiContainer');
+            container.style.display = 'block';
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.width = `${5 + Math.random() * 10}px`;
+                confetti.style.height = `${5 + Math.random() * 10}px`;
+                confetti.style.opacity = 1;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.animation = `confettiFall ${5 + Math.random() * 5}s linear forwards`;
+                confetti.style.animationDelay = `${Math.random() * 3}s`;
+                container.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+                container.style.display = 'none';
+            }, 10000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createBalloons();
+            
+            // Step 1: Start button
+            getElement('startBtn').addEventListener('click', () => {
+                goToStep(2);
+            });
+            
+            // Step 2: Memory cards
+            let memoriesClicked = 0;
+            document.querySelectorAll('.memory-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    card.style.transform = 'perspective(1000px) rotateY(15deg) translateY(-5px)';
+                    card.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.2)';
+                    memoriesClicked++;
+                    
+                    if (memoriesClicked >= 4) {
+                        showElement('memoryMessage');
+                        showElement('memoryNextBtn');
+                    }
+                });
+            });
+            
+            // Memory next button
+            getElement('memoryNextBtn').addEventListener('click', () => {
+                goToStep(3);
+            });
+            
+            // Gift box
+            getElement('giftBox').addEventListener('click', () => {
+                getElement('giftBox').style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    showElement('giftMessage');
+                    showElement('giftNextBtn');
+                    createConfetti();
+                }, 1000);
+            });
+            
+            // Gift next button
+            getElement('giftNextBtn').addEventListener('click', () => {
+                goToStep(4);
+            });
+            
+    // Unlock button
+    getElement('unlockBtn').addEventListener('click', () => {
+        const input = getElement('keyInput').value.toLowerCase();
+        if (input === 'happyfriend') {
+            goToStep(5); // Change to step 5
+            countdown();
+            createConfetti();
+        } else {
+            getElement('keyHint').textContent = 'Try combining the two clues without spaces!';
+        }
+    });
+        });
+        
+        // Countdown timer
+        function countdown() {
+            let count = 3;
+            const countdownElement = getElement('countdown');
+            
+            const interval = setInterval(() => {
+                count--;
+                countdownElement.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(interval);
+                    countdownElement.style.display = 'none';
+                    getElement('finalGift').classList.add('show');
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
